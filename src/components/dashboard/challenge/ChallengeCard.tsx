@@ -1,16 +1,13 @@
-import React, { useState, useEffect } from 'react';
-import { useNavigate, useLocation } from 'react-router-dom';
+import { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { Award, Zap, Ban, Users, CheckCircle2 } from 'lucide-react';
 import { getChatPath } from '../../../lib/utils/chat';
 import { Card } from '../../ui/card';
 import { Progress } from '../../ui/progress';
 import { ChallengeMessageButton } from './ChallengeMessageButton';
 import { ChallengeCancelConfirm } from './ChallengeCancelConfirm';
-import { PlayerList } from '../rank/PlayerList';
-import { PlayerProfileModal } from '../rank/PlayerProfileModal';
 import { quests } from '../../../data';
 import type { Challenge, Quest } from '../../../types/dashboard';
-import type { LeaderboardEntry } from '../../../types/community';
 import { supabase } from '../../../lib/supabase';
 
 interface ChallengeCardProps {
@@ -21,11 +18,8 @@ interface ChallengeCardProps {
 
 export function ChallengeCard({ challenge, activeQuest, onCancel }: ChallengeCardProps) {
   const [showCancelConfirm, setShowCancelConfirm] = useState(false);
-  const [showPlayerList, setShowPlayerList] = useState(false);
-  const [selectedPlayer, setSelectedPlayer] = useState<LeaderboardEntry | null>(null);
   const [playerCount, setPlayerCount] = useState<number>(0);
   const navigate = useNavigate();
-  const location = useLocation();
 
   // Fetch active players
   useEffect(() => {
