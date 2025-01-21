@@ -1,19 +1,7 @@
-import React from 'react';
-import { Trophy, Star, Award, Info, Users, Gift } from 'lucide-react';
-import { Card } from '../../ui/card';
-import { Tooltip } from '../../ui/tooltip';
-import { LeaderboardTooltip } from './LeaderboardTooltip';
 import { CommunityLeaderboard } from './CommunityLeaderboard';
-import { PrizePoolInfo } from './PrizePoolInfo';
 import { useCommunity } from '../../../hooks/useCommunity';
 import { useSupabase } from '../../../contexts/SupabaseContext';
-import type { RankProgress } from '../../../types/dashboard';
-
-interface RankStatusProps {
-  rankProgress: RankProgress;
-}
-
-export function RankStatus({ rankProgress }: RankStatusProps) {
+export function RankStatus() {
   const { user } = useSupabase();
   const { primaryCommunity, loading: communityLoading } = useCommunity(user?.id);
 
@@ -22,7 +10,7 @@ export function RankStatus({ rankProgress }: RankStatusProps) {
       <CommunityLeaderboard 
         communityId={primaryCommunity?.id || ''}
         userId={user?.id}
-        key={`${primaryCommunity?.id}-${Date.now()}`} // Force re-render when community changes and FP updates
+        key={`${primaryCommunity?.id}`} 
       />
     </div>
   );

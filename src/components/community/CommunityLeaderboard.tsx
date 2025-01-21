@@ -58,6 +58,13 @@ export function CommunityLeaderboard({ communityId, userId, onClose }: Community
     }
 
     fetchLeaderboard();
+    const handleUpdate = (event: Event) => {
+      if (event.type === "dashboardUpdate") {
+        fetchLeaderboard();
+      }
+    };
+    window.addEventListener("dashboardUpdate", handleUpdate);
+    return () => window.removeEventListener("dashboardUpdate", handleUpdate);
   }, [communityId, userId]);
 
   if (loading) {
