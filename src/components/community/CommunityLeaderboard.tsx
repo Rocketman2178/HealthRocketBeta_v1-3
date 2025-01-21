@@ -58,7 +58,6 @@ export function CommunityLeaderboard({ communityId, userId, onClose }: Community
     }
 
     fetchLeaderboard();
-    fetchLeaderboard();
     const handleUpdate = (event: Event) => {
       if (event.type === "dashboardUpdate") {
         fetchLeaderboard();
