@@ -189,9 +189,9 @@ export function useBoostState(userId: string | undefined) {
       if (error) throw error;
       
       // Dispatch dashboard update event with FP earned
-      window.dispatchEvent(new CustomEvent('dashboardUpdate', {
-        detail: { fpEarned: data.fp_earned }
-      }));
+      // window.dispatchEvent(new CustomEvent('dashboardUpdate', {
+      //   detail: { fpEarned: data.fp_earned }
+      // }));
 
       // Refresh data after successful completion
       const { data: completedBoosts, error: fetchError } = await supabase
@@ -221,6 +221,7 @@ export function useBoostState(userId: string | undefined) {
           weekStartDate: weekStartDate
         })));
       }
+      window.dispatchEvent(new CustomEvent("dashboardUpdate"));
 
     } catch (err) {
       console.error('Error completing boost:', err);
