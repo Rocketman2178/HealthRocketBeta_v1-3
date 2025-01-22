@@ -13,6 +13,7 @@ import { FPCongrats } from "../ui/fp-congrats";
 import { useBoostState } from "../../hooks/useBoostState";
 import { supabase } from "../../lib/supabase";
 
+
 export function CoreDashboard() {
   const [fpEarned, setFpEarned] = useState<number | null>(null);
   const { user } = useSupabase();
@@ -104,7 +105,6 @@ export function CoreDashboard() {
 
     return () => clearTimeout(timeoutId);
   }, [user?.id]);
-
   // Handle closing the FP congrats modal
   const handleCloseModal = () => {
     setFpEarned(null);
