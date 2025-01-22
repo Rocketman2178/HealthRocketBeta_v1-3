@@ -1,7 +1,6 @@
 import { supabase } from '../lib/supabase/client';
 import { useState, useEffect } from 'react';
 import type { Database } from '../types/supabase';
-import { EmptyResultError } from '../lib/errors';
 
 type User = Database['public']['Tables']['users']['Row'];
 
@@ -32,18 +31,15 @@ export function useUser(userId: string | undefined) {
 
       try {
         // Fetch user data
-        const { data: userData, error: userError } = await supabase
+        const { data: newUserData, error: userError } = await supabase
           .from('users')
           .select('*')
           .eq('id', userId)
           .maybeSingle();
-
         if (userError && userError.code !== 'PGRST116') {
           throw userError;
         }
-
-        setUserData(userData);
-
+        newUserData && setUserData(newUserData)
         // Fetch latest health assessment
         const { data: latestHealth, error: healthError } = await supabase
           .from('health_assessments')
