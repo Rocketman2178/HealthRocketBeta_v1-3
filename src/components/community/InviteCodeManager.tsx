@@ -1,8 +1,7 @@
-import React, { useState } from 'react';
-import { Ticket, Plus, Calendar, Copy, Check, X } from 'lucide-react';
+import { useState } from 'react';
+import { Ticket, Plus } from 'lucide-react';
 import { Card } from '../ui/card';
 import { supabase } from '../../lib/supabase';
-import type { InviteCode } from '../../types/community';
 
 interface InviteCodeManagerProps {
   communityId: string;
