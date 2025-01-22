@@ -1,5 +1,4 @@
-import React from 'react';
-import { Target, Users, ChevronDown, ChevronUp, Clock, Trophy, CheckCircle, Flame } from 'lucide-react';
+import {CheckCircle, Flame } from 'lucide-react';
 import type { StreakInfo } from '../../../types/dashboard';
 
 interface MilestoneInfo {
@@ -53,11 +52,8 @@ function getCurrentMilestoneInfo(streak: number): {
 
 export function StreakProgress({ 
   burnStreak,
-  dailyBoostsCompleted,
-  maxDailyBoosts,
-  availableBoosts
 }: StreakProgressProps) {
-  const { currentMilestone, nextMilestone, progress } = getCurrentMilestoneInfo(burnStreak);
+  const {nextMilestone, progress } = getCurrentMilestoneInfo(burnStreak);
   const daysUntilNext = nextMilestone ? nextMilestone.days - burnStreak : 21 - (burnStreak % 21);
   const nextReward = nextMilestone ? nextMilestone.reward : 200;
 

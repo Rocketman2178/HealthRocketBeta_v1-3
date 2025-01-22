@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { CompanyLogo } from './header/CompanyLogo';
 import { DashboardHeader } from './header/DashboardHeader';
 import { MyRocket } from './rocket/MyRocket';
@@ -11,6 +11,7 @@ import { useDashboardData } from '../../hooks/useDashboardData';
 import { usePlayerStats } from '../../hooks/usePlayerStats';
 import { FPCongrats } from '../ui/fp-congrats';
 import { useBoostState } from '../../hooks/useBoostState';
+import { supabase } from '../../lib/supabase';
 
 export function CoreDashboard() {
   const [fpEarned, setFpEarned] = useState<number | null>(null);
@@ -53,6 +54,49 @@ export function CoreDashboard() {
     return () => window.removeEventListener('dashboardUpdate', handleUpdate);
   }, [refreshData, refreshStats]);
 
+  useEffect(() => {
+    const resetBurnStreak = async () => {
+      if (!user?.id) return;
+      const now = new Date();
+      const todayMidnight = new Date();
+      todayMidnight.setHours(0,0,0,0); 
+      const oneMinuteAfterMidnight = new Date(todayMidnight.getTime() + 60* 1000); 
+      // Check if it's within 1 minute after midnight
+      if (now >= todayMidnight && now <= oneMinuteAfterMidnight) {
+        // Query completed boosts for today
+        const today = now.toISOString().split('T')[0];
+        const { data, error } = await supabase
+          .from('completed_boosts')
+          .select('*')
+          .eq('user_id', user?.id)
+          .eq('completed_date', today);
+  
+        if (error) {
+          console.error("Error fetching today's boosts:", error);
+          return;
+        }
+  
+        // If no boosts completed today, reset the burn streak
+        if (data?.length === 0) {
+          const { error: updateError } = await supabase
+            .from('users')
+            .update({ burn_streak: 0 })
+            .eq('id', user?.id)
+            .single();
+  
+          if (updateError) {
+            console.error('Error resetting burn streak:', updateError);
+          } else {
+            console.log('Burn streak reset to zero.');
+          }
+        }
+      }
+    };
+    const interval = setInterval(resetBurnStreak, 60 * 1000);
+    return () => clearInterval(interval);
+  }, [user?.id]);
+  
+  
   // Handle closing the FP congrats modal
   const handleCloseModal = () => {
     setFpEarned(null);
