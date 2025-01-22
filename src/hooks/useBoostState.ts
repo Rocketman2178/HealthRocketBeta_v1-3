@@ -202,7 +202,6 @@ export function useBoostState(userId: string | undefined) {
           p_user_id: userId,
           p_boost_id: boostId,
         });
-
         if (error) throw error;
         if (todaysStat?.boosts_completed < 1) {
           // Get user stats first
@@ -225,6 +224,7 @@ export function useBoostState(userId: string | undefined) {
             detail: { fpEarned: data.fp_earned },
           })
         );
+
 
         // Refresh data after successful completion
         const { data: completedBoosts, error: fetchError } = await supabase

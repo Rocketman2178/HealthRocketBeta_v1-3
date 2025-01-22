@@ -13,6 +13,7 @@ import { FPCongrats } from '../ui/fp-congrats';
 import { useBoostState } from '../../hooks/useBoostState';
 import { supabase } from '../../lib/supabase';
 
+
 export function CoreDashboard() {
   const [fpEarned, setFpEarned] = useState<number | null>(null);
   const { user } = useSupabase();
