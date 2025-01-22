@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect } from 'react';
+import  { useState, useRef, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { MessageCircle, ArrowLeft, Users } from 'lucide-react';
 import { getChatId } from '../../lib/utils/chat';

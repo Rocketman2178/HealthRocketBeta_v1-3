@@ -1,9 +1,7 @@
-import React, { useState, useMemo } from 'react';
+import { useState, useMemo } from 'react';
 import { User, Search, X, Trophy, Users, Building2 } from 'lucide-react';
-import { ModalContainer } from '../../ui/modal-container';
 import { PlayerProfileModal } from './PlayerProfileModal';
 import type { LeaderboardEntry } from '../../../types/community';
-import { supabase } from '../../../lib/supabase';
 
 interface PlayerListProps {
   players: LeaderboardEntry[];
