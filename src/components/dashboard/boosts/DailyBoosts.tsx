@@ -41,21 +41,6 @@ export function DailyBoosts({
     dailyFpEarned
   );
 
-  const handleCompleteBoost = async (id: string) => {
-    if (availableBoosts <= 0) {
-      return; // Don't allow more than 3 boosts per day
-    }
-    if (onCompleteBoost) {
-      try {
-        await onCompleteBoost(id);
-        // Trigger dashboard update
-        window.dispatchEvent(new CustomEvent('dashboardUpdate'));
-      } catch (err) {
-        console.error('Error completing boost:', err);
-      }
-    }
-  };
-
   return (
     <div className="space-y-4">
       <div className="flex items-center justify-between">

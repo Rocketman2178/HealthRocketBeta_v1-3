@@ -1,5 +1,5 @@
-import React, { useState, useEffect, useCallback } from 'react';
-import { Award, Zap, History, Target } from 'lucide-react';
+import { useState, useEffect } from 'react';
+import { Award,History, Target } from 'lucide-react';
 import { Card } from '../../ui/card';
 import { ChallengeCard } from './ChallengeCard';
 import { ChallengeLibrary } from './ChallengeLibrary';
@@ -8,7 +8,6 @@ import { CompletedChallengesModal } from './CompletedChallengesModal';
 import { useChallengeManager } from '../../../hooks/useChallengeManager';
 import { useCompletedActivities } from '../../../hooks/useCompletedActivities';
 import { quests } from '../../../data';
-import type { Challenge } from '../../../types/dashboard';
 
 interface ChallengeGridProps {
   userId: string | undefined;
@@ -20,7 +19,6 @@ export function ChallengeGrid({ userId, categoryScores }: ChallengeGridProps) {
   const [recommendedChallenges, setRecommendedChallenges] = useState<string[]>([]);
   const [activeQuestDetails, setActiveQuestDetails] = useState<Quest | null>(null);
   const [showCompletedChallenges, setShowCompletedChallenges] = useState(false);
-  const [isTransitioning, setIsTransitioning] = useState(false);
   const { data: completedActivities } = useCompletedActivities(userId);
   const {
     activeChallenges, 
