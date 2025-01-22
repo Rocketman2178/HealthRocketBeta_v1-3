@@ -1,7 +1,5 @@
 import { useState, useEffect, useCallback } from 'react';
 import { supabase } from '../lib/supabase';
-import { calculateStreakBonus } from '../lib/utils';
-import { boosts } from '../data';
 import type { BoostState } from '../types/dashboard';
 
 export function useBoostState(userId: string | undefined) {
@@ -10,7 +8,6 @@ export function useBoostState(userId: string | undefined) {
   const [isLoading, setIsLoading] = useState(true);
   const [daysUntilReset, setDaysUntilReset] = useState<number>(7);
   const [weekStartDate, setWeekStartDate] = useState<Date>(new Date());
-  const [todayBoosts, setTodayBoosts] = useState<BoostState[]>([]);
 
   // Get today's completed boosts count and FP
   const getTodayStats = useCallback(async () => {

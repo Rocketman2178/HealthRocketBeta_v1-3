@@ -1,5 +1,5 @@
-import React, { useState, useEffect } from 'react';
-import { Trophy, Calendar, ChevronDown, ChevronUp, Heart, User, Activity, Zap, Users, Info, Star } from 'lucide-react';
+import { useState, useEffect } from 'react';
+import { Trophy, ChevronDown, ChevronUp, Heart, User, Activity, Zap, Users, Info, Star } from 'lucide-react';
 import { Card } from '../../ui/card';
 import { Tooltip } from '../../ui/tooltip';
 import { PlayerList } from './PlayerList';
@@ -117,6 +117,13 @@ export function CommunityLeaderboard({ communityId, userId }: CommunityLeaderboa
     }
 
     fetchLeaderboard();
+    const handleUpdate = (event: Event) => {
+      if (event.type === "dashboardUpdate") {
+        fetchLeaderboard();
+      }
+    };
+    window.addEventListener("dashboardUpdate", handleUpdate);
+    return () => window.removeEventListener("dashboardUpdate", handleUpdate);
   }, [communityId, timeframe, userId, isGlobal]);
 
   if (loading || communityLoading) {

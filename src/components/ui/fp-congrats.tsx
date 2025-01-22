@@ -1,4 +1,3 @@
-import React from 'react';
 import { Rocket, Zap, X, Flame, Award, Activity, Target } from 'lucide-react';
 
 interface FPCongratsProps {
