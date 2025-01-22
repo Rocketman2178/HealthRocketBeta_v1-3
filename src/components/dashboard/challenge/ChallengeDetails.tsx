@@ -1,5 +1,4 @@
-import React from 'react';
-import { X, Award, Zap, Clock, CheckCircle2, Target, Brain, Calendar, Moon, Activity, Apple, Database } from 'lucide-react';
+import { X, Award, Zap, Clock, Brain, Moon, Activity, Apple, Database } from 'lucide-react';
 import { getChatPath } from '../../../lib/utils/chat';
 import type { Challenge } from '../../../types/dashboard';
 
@@ -221,13 +220,14 @@ export function ChallengeDetails({
         {/* Chat Button */}
         <div className="mt-6 flex justify-center">
           <button
+          disabled={!isAlreadyActive}
             onClick={() => {
               const chatId = challenge.challenge_id || challenge.id;
               if (chatId) {
                 navigate(getChatPath(chatId));
               }
             }}
-            className="flex items-center gap-2 px-6 py-3 bg-orange-500 text-white rounded-lg hover:bg-orange-600 transition-colors"
+            className={`flex items-center gap-2 px-6 py-3 ${isAlreadyActive?' bg-orange-500':"bg-gray-400"} text-white rounded-lg  ${isAlreadyActive? 'hover:bg-orange-600':""} transition-colors`}
           >
             <MessageCircle size={20} />
             <span>Access the Challenge Chat</span>
