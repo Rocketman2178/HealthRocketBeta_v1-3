@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { CompanyLogo } from './header/CompanyLogo';
 import { DashboardHeader } from './header/DashboardHeader';
 import { MyRocket } from './rocket/MyRocket';
@@ -11,11 +11,6 @@ import { useDashboardData } from '../../hooks/useDashboardData';
 import { usePlayerStats } from '../../hooks/usePlayerStats';
 import { FPCongrats } from '../ui/fp-congrats';
 import { useBoostState } from '../../hooks/useBoostState';
-import { supabase } from '../../lib/supabase';
-
-interface DashboardUpdateEvent extends Event {
-  type: 'dashboardUpdate';
-}
 
 export function CoreDashboard() {
   const [fpEarned, setFpEarned] = useState<number | null>(null);

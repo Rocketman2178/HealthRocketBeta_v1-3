@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import  { useState } from 'react';
 import { Users, Trophy } from 'lucide-react';
 import { Card } from '../ui/card';
 import { CommunityLeaderboard } from './CommunityLeaderboard';

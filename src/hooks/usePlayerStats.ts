@@ -2,7 +2,6 @@ import { useState, useEffect } from 'react';
 import { supabase } from '../lib/supabase/client';
 import type { User } from '@supabase/supabase-js';
 import { calculateNextLevelPoints } from '../lib/utils';
-import { DatabaseError } from '../lib/errors';
 
 interface PlayerStats {
   level: number;

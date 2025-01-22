@@ -1,5 +1,5 @@
-import React, { useState, useEffect } from 'react';
-import { Trophy, Users, X, ChevronDown, ChevronUp } from 'lucide-react';
+import { useState, useEffect } from 'react';
+import { Trophy, X,  } from 'lucide-react';
 import { Card } from '../ui/card';
 import type { LeaderboardEntry } from '../../types/community';
 import { supabase } from '../../lib/supabase';
@@ -14,7 +14,6 @@ export function CommunityLeaderboard({ communityId, userId, onClose }: Community
   const [entries, setEntries] = useState<LeaderboardEntry[]>([]);
   const [userRank, setUserRank] = useState<LeaderboardEntry | null>(null);
   const [loading, setLoading] = useState(true);
-  const [expanded, setExpanded] = useState(false);
 
   // Get first day of current month
   const getMonthStart = () => {
