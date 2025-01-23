@@ -125,7 +125,7 @@ BEGIN
 
     -- Update user's burn streak
     UPDATE users
-    SET burn_streak = burn_streak + 1
+    SET burn_streak = burn_streak + 0
     WHERE id = p_user_id;
 
     RETURN jsonb_build_object(
