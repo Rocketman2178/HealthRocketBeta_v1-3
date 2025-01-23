@@ -1,4 +1,4 @@
-import React, {useState } from "react";
+import React, { useState } from "react";
 import { User, Check, Image as ImageIcon, Trash2 } from "lucide-react";
 import { useSupabase } from "../../contexts/SupabaseContext";
 import { PlayerProfileModal } from "../dashboard/rank/PlayerProfileModal";
@@ -11,36 +11,29 @@ interface ChatMessageProps {
   message: ChatMessageType;
   onDelete?: (message: ChatMessageType) => void;
   className?: string;
+  challengeId: string | undefined;
 }
 
 export function ChatMessage({
   message,
   onDelete,
   className,
+  challengeId,
 }: ChatMessageProps) {
   const { user } = useSupabase();
   const [showProfile, setShowProfile] = useState(false);
   const [userData, setUserData] = useState<any>(null);
   const isOwnMessage = user?.id === message.userId;
-  const getStartDate = () => {
-    const date = new Date();
-    date.setMonth(0, 1);
-    date.setHours(0, 0, 0, 0);
-    return date.toISOString();
-  };
   const handleProfileClick = async (e: React.MouseEvent) => {
     e.stopPropagation();
-    const { data, error } = await supabase.rpc("get_global_leaderboard", {
-      p_start_date: getStartDate(),
+    const { data, error } = await supabase.rpc("test_challenge_players", {
+      p_challenge_id: challengeId,
     });
     const mappedEntries: LeaderboardEntry[] = data.map((row) => ({
       userId: row.user_id,
       name: row.name,
       createdAt: row.created_at,
-      rank: Number(row.rank),
-      fuelPoints: Number(row.total_fp),
       level: row.level,
-      communityName: row.community_name,
       burnStreak: row.burn_streak,
       avatarUrl: row.avatar_url,
       healthScore: Number(row.health_score),
