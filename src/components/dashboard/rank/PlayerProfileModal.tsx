@@ -1,4 +1,3 @@
-import React from 'react';
 import { X, Trophy, Heart, Activity, Users, Star } from 'lucide-react';
 import { ModalContainer } from '../../ui/modal-container';
 import { useCommunity } from '../../../hooks/useCommunity';

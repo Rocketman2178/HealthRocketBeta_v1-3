@@ -65,7 +65,7 @@ BEGIN
         UPDATE users
         SET 
             burn_streak = CASE 
-                WHEN v_fp_earned > 0 THEN burn_streak + 1
+                WHEN v_fp_earned > 0 THEN burn_streak + 0
                 ELSE 0
             END,
             fuel_points = fuel_points + COALESCE(v_fp_earned, 0) + COALESCE(v_streak_bonus, 0)
@@ -129,7 +129,7 @@ BEGIN
     UPDATE users
     SET 
         burn_streak = CASE 
-            WHEN v_fp_earned > 0 THEN burn_streak + 1
+            WHEN v_fp_earned > 0 THEN burn_streak + 0
             ELSE 0
         END,
         fuel_points = fuel_points + COALESCE(v_fp_earned, 0) + COALESCE(v_streak_bonus, 0)
