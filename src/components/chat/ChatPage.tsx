@@ -181,7 +181,8 @@ export function ChatPage() {
         userId: user.user_id,
         name: user.name,
         avatarUrl: user.avatar_url,
-        level: user.level
+        level: user.level,
+        plan:user.plan
       }));
 
       setPlayers(mappedPlayers);
@@ -383,6 +384,7 @@ export function ChatPage() {
                   key={message.id}
                   message={message}
                   onDelete={handleDelete}
+                  challengeId={challengeId}
                 />
               ))
             )}
