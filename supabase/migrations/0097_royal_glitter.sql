@@ -127,7 +127,7 @@ BEGIN
         SET 
             -- Only increment streak by 1 if had boosts yesterday and today
             burn_streak = CASE 
-                WHEN v_boosts_completed > 0 AND v_had_boosts_yesterday THEN burn_streak + 0
+                WHEN v_boosts_completed > 0 AND v_had_boosts_yesterday THEN burn_streak 
                 WHEN v_boosts_completed > 0 THEN 1
                 ELSE 0
             END,
