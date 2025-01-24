@@ -57,35 +57,10 @@ export function CoreDashboard() {
   }, [refreshData, refreshStats]);
 
   useEffect(() => {
-    const resetBurnStreak = async (now: Date) => {
+    const resetBurnStreak = async () => {
       if (!user?.id) return;
-      const today = now.toISOString().split("T")[0];
-      // Query completed boosts for today
-      const { data, error } = await supabase
-        .from("completed_boosts")
-        .select("*")
-        .eq("user_id", user.id)
-        .eq("completed_date", today);
-
-      if (error) {
-        console.error("Error fetching today's boosts:", error);
-        return;
-      }
-
-      // If no boosts completed today, reset the burn streak
-      if (data?.length === 0) {
-        const { error: updateError } = await supabase
-          .from("users")
-          .update({ burn_streak: 0 })
-          .eq("id", user.id)
-          .single();
-
-        if (updateError) {
-          console.error("Error resetting burn streak:", updateError);
-        } else {
-          console.log("Burn streak reset to zero.");
-        }
-      }
+      await supabase.rpc("check_and_reset_burn_streaks");
+     
     };
 
     const scheduleReset = () => {
@@ -94,7 +69,7 @@ export function CoreDashboard() {
       midnight.setHours(24, 0, 0, 0);
       const timeUntilMidnight = midnight.getTime() - now.getTime() - 30 * 1000;
       const timeoutId = setTimeout(async () => {
-        await resetBurnStreak(now);
+        await resetBurnStreak();
         scheduleReset();
       }, timeUntilMidnight);
 

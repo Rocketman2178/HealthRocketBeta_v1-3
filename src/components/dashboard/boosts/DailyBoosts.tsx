@@ -83,14 +83,7 @@ export function DailyBoosts({
               selectedBoosts={selectedBoosts}
               weeklyBoosts={weeklyBoosts}
               boostsRemaining={availableBoosts}
-              onComplete={async (id) => {
-                if (availableBoosts <= 0) {
-                  return; // Don't allow more than 3 boosts per day
-                }
-                if (onCompleteBoost) {
-                  await onCompleteBoost(id);
-                }
-              }}
+              onComplete={onCompleteBoost}
             />
           ))}
         </div>

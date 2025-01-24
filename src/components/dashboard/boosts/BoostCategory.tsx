@@ -118,6 +118,7 @@ export function BoostCategory({
               isPreviousDay={isPreviousDay}
               isLocked={isLocked}
               isDisabled={isDisabled}
+              boostsRemaining={boostsRemaining}
               onComplete={onComplete}
             />
           );

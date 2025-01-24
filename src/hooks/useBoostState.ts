@@ -1,27 +1,12 @@
 import { useState, useEffect, useCallback } from "react";
 import { supabase } from "../lib/supabase";
 import type { BoostState } from "../types/dashboard";
-interface TodayState {
-  boosts_available: number;
-  boosts_completed: number;
-  burn_streak: number;
-  fp_earned: number;
-  next_milestone: number;
-}
 export function useBoostState(userId: string | undefined) {
   const [selectedBoosts, setSelectedBoosts] = useState<BoostState[]>([]);
   const [weeklyBoosts, setWeeklyBoosts] = useState<BoostState[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [daysUntilReset, setDaysUntilReset] = useState<number>(7);
   const [weekStartDate, setWeekStartDate] = useState<Date>(new Date());
-  const [todaysStat, setTodaysStat] = useState<TodayState>({
-    boosts_available: 0,
-    boosts_completed: 0,
-    burn_streak: 0,
-    fp_earned: 0,
-    next_milestone: 0,
-  });
-  // Get today's completed boosts count and FP
   const getTodayStats = useCallback(async () => {
     if (!userId) return;
 
@@ -32,8 +17,7 @@ export function useBoostState(userId: string | undefined) {
         p_user_id: userId,
       }
     );
-    setTodaysStat(stats);
-  
+
     if (statsError) {
       console.error("Error getting today's stats:", statsError);
       return;
@@ -81,12 +65,12 @@ export function useBoostState(userId: string | undefined) {
     return data?.length || 0;
   }, [userId]);
 
-   // Initialize today's stats on mount
-   useEffect(() => {
+  // Initialize today's stats on mount
+  useEffect(() => {
     if (userId) {
       getTodayStats();
     }
-  }, [userId,getTodayStats]);
+  }, [userId, getTodayStats]);
 
   // Fetch completed boosts for current week
   useEffect(() => {
@@ -126,7 +110,6 @@ export function useBoostState(userId: string | undefined) {
     fetchCompletedBoosts();
   }, [userId]);
 
- 
   useEffect(() => {
     if (!userId) return;
 
@@ -188,82 +171,64 @@ export function useBoostState(userId: string | undefined) {
     const interval = setInterval(getTodayStats, 60000);
     return () => clearInterval(interval);
   }, [userId, weekStartDate, isLoading]);
-  const completeBoost = useCallback(
-    async (boostId: string) => {
-      try {
-        // Check if already at daily limit
-        const todayCount = await getTodayBoostCount();
-        if (todayCount >= 3) {
-          console.log("Daily boost limit reached");
-          return;
-        }
 
-        const { data, error } = await supabase.rpc("complete_boost", {
-          p_user_id: userId,
-          p_boost_id: boostId,
-        });
-        if (error) throw error;
-        if (todaysStat?.boosts_completed < 1) {
-          // Get user stats first
-          const { data: userData, error: userError } = await supabase
-            .from("users")
-            .select("burn_streak")
-            .eq("id", userId)
-            .single();
+  const completeBoost = async (boostId: string) => {
+    try {
+      // Check if already at daily limit
+      const todayCount = await getTodayBoostCount();
+      if (todayCount >= 3) {
+        console.log("Daily boost limit reached");
+        return;
+      }
 
-          if (userError) throw userError;
-          await supabase
-            .from("users")
-            .update({ burn_streak: userData?.burn_streak + 1 })
-            .eq("id", userId)
-            .single();
-        }
-        // Dispatch dashboard update event with FP earned
-        window.dispatchEvent(
-          new CustomEvent("dashboardUpdate", {
-            detail: { fpEarned: data.fp_earned },
-          })
+      const { data, error } = await supabase.rpc("complete_boost", {
+        p_user_id: userId,
+        p_boost_id: boostId,
+      });
+      if (error) throw error;
+      // Dispatch dashboard update event with FP earned
+      window.dispatchEvent(
+        new CustomEvent("dashboardUpdate", {
+          detail: { fpEarned: data.fp_earned },
+        })
+      );
+
+      // Refresh data after successful completion
+      const { data: completedBoosts, error: fetchError } = await supabase
+        .from("completed_boosts")
+        .select("*")
+        .eq("user_id", userId)
+        .gte("completed_date", weekStartDate.toISOString().split("T")[0]);
+
+      if (fetchError) throw fetchError;
+
+      // Update weekly boosts state
+      if (completedBoosts) {
+        setWeeklyBoosts(
+          completedBoosts.map((boost) => ({
+            id: boost.boost_id,
+            completedAt: new Date(boost.completed_at),
+            weekStartDate: weekStartDate,
+          }))
         );
 
-
-        // Refresh data after successful completion
-        const { data: completedBoosts, error: fetchError } = await supabase
-          .from("completed_boosts")
-          .select("*")
-          .eq("user_id", userId)
-          .gte("completed_date", weekStartDate.toISOString().split("T")[0]);
-
-        if (fetchError) throw fetchError;
-
-        // Update weekly boosts state
-        if (completedBoosts) {
-          setWeeklyBoosts(
-            completedBoosts.map((boost) => ({
-              id: boost.boost_id,
-              completedAt: new Date(boost.completed_at),
-              weekStartDate: weekStartDate,
-            }))
-          );
-
-          // Update selected boosts for today
-          const today = new Date().toISOString().split("T")[0];
-          const todayBoosts = completedBoosts.filter(
-            (boost) => boost.completed_date === today
-          );
-          setSelectedBoosts(
-            todayBoosts.map((boost) => ({
-              id: boost.boost_id,
-              completedAt: new Date(boost.completed_at),
-              weekStartDate: weekStartDate,
-            }))
-          );
-        }
-      } catch (err) {
-        console.error("Error completing boost:", err);
+        // Update selected boosts for today
+        const today = new Date().toISOString().split("T")[0];
+        const todayBoosts = completedBoosts.filter(
+          (boost) => boost.completed_date === today
+        );
+        setSelectedBoosts(
+          todayBoosts.map((boost) => ({
+            id: boost.boost_id,
+            completedAt: new Date(boost.completed_at),
+            weekStartDate: weekStartDate,
+          }))
+        );
       }
-    },
-    [userId, weekStartDate, getTodayBoostCount]
-  );
+    } catch (err) {
+      console.error("Error completing boost:", err);
+    }
+  };
 
   return {
     selectedBoosts,
