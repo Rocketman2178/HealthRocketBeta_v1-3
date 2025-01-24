@@ -22,6 +22,7 @@ interface BoostItemProps {
   isLocked: boolean;
   isDisabled: boolean;
   onComplete?: (id: string) => Promise<void>;
+  boostsRemaining:number;
 }
 
 export function BoostItem({ 
@@ -39,7 +40,8 @@ export function BoostItem({
   isPreviousDay,
   isLocked,
   isDisabled,
-  onComplete 
+  onComplete ,
+  boostsRemaining
 }: BoostItemProps) {
   const [showDescription, setShowDescription] = useState(false);
 
@@ -50,7 +52,7 @@ export function BoostItem({
 
   const handleCheckClick = (e: React.MouseEvent) => {
     e.stopPropagation();
-    if (!isLocked && !isCompletedThisWeek && !isDisabled && onComplete) {
+    if (!isLocked && !isCompletedThisWeek && !isDisabled && onComplete && boostsRemaining >0) {
       onComplete(id).catch(err => {
         console.error('Error completing boost:', err);
       });
