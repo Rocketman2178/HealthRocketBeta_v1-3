@@ -1,13 +1,8 @@
 import React, { useState, useEffect } from 'react';
-import { User, Mail, Calendar, Camera, Award, LogOut, Shield, X, Trophy } from 'lucide-react';
-import { Card } from '../ui/card';
-import { ModalContainer } from '../ui/modal-container';
-import { PlayerProfileModal } from '../dashboard/rank/PlayerProfileModal';
-import { PlayerList } from '../dashboard/rank/PlayerList';
+import { Mail, Calendar, Camera,LogOut, X, Trophy } from 'lucide-react';
 import { ProfileStats } from './ProfileStats';
 import { ProfilePrizes } from './ProfilePrizes';
 import { RankHistory } from './RankHistory';
-import { CompletedActivities } from './CompletedActivities';
 import { SubscriptionPlan } from './SubscriptionPlan';
 import { EditableField } from './EditableField';
 import { useSupabase } from '../../contexts/SupabaseContext';
@@ -17,10 +12,6 @@ import { uploadProfileImage } from '../../lib/profile';
 interface PlayerProfileProps {
   isOpen: boolean;
   onClose: () => void;
-}
-
-interface SubscriptionPlanProps {
-  onOpenChange?: (isOpen: boolean) => void;
 }
 
 export function PlayerProfile({ isOpen, onClose }: PlayerProfileProps) {

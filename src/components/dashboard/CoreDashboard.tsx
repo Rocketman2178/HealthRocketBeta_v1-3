@@ -111,39 +111,29 @@ export function CoreDashboard() {
         level={stats.level}
         nextLevelPoints={stats.nextLevelPoints}
       />
-      <main className="max-w-6xl mx-auto px-4 py-6 space-y-6">
+      <main className="max-w-6xl mx-auto px-4 py-6 flex flex-col h-screen gap-4">
         <MyRocket
           level={stats.level}
           fuelPoints={stats.fuelPoints}
           nextLevelPoints={stats.nextLevelPoints}
           hasUpgrade={true}
         />
-        <div id="leaderboard" className="space-y-4">
-          <div className="flex items-center justify-between">
-            <h2 className="text-xl font-bold text-white">Player Standings</h2>
-          </div>
-          <RankStatus />
-        </div>
-        <div id="quests">
-          <QuestCard userId={user?.id} categoryScores={data.categoryScores} />
-        </div>
-        <div id="challenges">
-          <ChallengeGrid
-            userId={user?.id}
-            categoryScores={data.categoryScores}
-            verificationRequirements={data.verificationRequirements}
-          />
-        </div>
-        <div id="boosts">
-          <DailyBoosts
-            burnStreak={stats.burnStreak}
-            completedBoosts={data.completedBoosts}
-            selectedBoosts={selectedBoosts}
-            weeklyBoosts={weeklyBoosts}
-            daysUntilReset={daysUntilReset}
-            onCompleteBoost={completeBoost}
-          />
-        </div>
+        <RankStatus />
+        <QuestCard userId={user?.id} categoryScores={data.categoryScores} />
+
+        <ChallengeGrid
+          userId={user?.id}
+          categoryScores={data.categoryScores}
+          verificationRequirements={data.verificationRequirements}
+        />
+        <DailyBoosts
+          burnStreak={stats.burnStreak}
+          completedBoosts={data.completedBoosts}
+          selectedBoosts={selectedBoosts}
+          weeklyBoosts={weeklyBoosts}
+          daysUntilReset={daysUntilReset}
+          onCompleteBoost={completeBoost}
+        />
       </main>
     </div>
   );

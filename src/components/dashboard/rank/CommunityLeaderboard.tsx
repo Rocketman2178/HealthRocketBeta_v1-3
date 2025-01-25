@@ -155,6 +155,10 @@ export function CommunityLeaderboard({ communityId, userId }: CommunityLeaderboa
   }
 
   return (
+    <div id="boosts" className="space-y-4">
+      <div className="flex items-center justify-between">
+        <h2 className="text-xl font-bold text-white">Player Standings</h2>
+      </div>
     <Card className="p-4">
       {/* Top Controls */}
       <div className="flex items-center justify-between mb-6">
@@ -463,10 +467,12 @@ export function CommunityLeaderboard({ communityId, userId }: CommunityLeaderboa
       )}
       {showPlayerList && (
         <PlayerList
+          isGlobal={isGlobal} 
           players={entries}
           onClose={() => setShowPlayerList(false)}
         />
       )}
     </Card>
+    </div>
   );
 }

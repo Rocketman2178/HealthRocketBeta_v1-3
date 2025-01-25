@@ -6,12 +6,11 @@ export function RankStatus() {
   const { primaryCommunity} = useCommunity(user?.id);
 
   return (
-    <div className="space-y-4">
       <CommunityLeaderboard 
         communityId={primaryCommunity?.id || ''}
         userId={user?.id}
         key={`${primaryCommunity?.id}`} 
       />
-    </div>
+   
   );
 }

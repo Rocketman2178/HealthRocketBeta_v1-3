@@ -4,12 +4,13 @@ import { PlayerProfileModal } from './PlayerProfileModal';
 import type { LeaderboardEntry } from '../../../types/community';
 
 interface PlayerListProps {
+  isGlobal:boolean;
   players: LeaderboardEntry[];
   onClose: () => void;
   onPlayerSelect?: (player: LeaderboardEntry) => void;
 }
 
-export function PlayerList({ players, onClose, onPlayerSelect }: PlayerListProps) {
+export function PlayerList({ isGlobal,players, onClose, onPlayerSelect }: PlayerListProps) {
   const [selectedPlayer, setSelectedPlayer] = useState<LeaderboardEntry | null>(null);
   const [searchQuery, setSearchQuery] = useState('');
 
@@ -37,7 +38,7 @@ export function PlayerList({ players, onClose, onPlayerSelect }: PlayerListProps
   return (
     <>
       <div 
-        className="fixed inset-0 bg-black/80 backdrop-blur-sm z-[200] flex items-center justify-center p-4"
+        className="absolute inset-0 bg-black/80 backdrop-blur-sm z-[200] flex items-center justify-center p-4"
         onClick={onClose}
       >
         <div 
@@ -47,7 +48,7 @@ export function PlayerList({ players, onClose, onPlayerSelect }: PlayerListProps
           {/* Header */}
           <div className="p-4 border-b border-gray-700">
             <div className="flex items-center justify-between mb-4">
-              <h2 className="text-xl font-bold text-white">Community Players</h2>
+              <h2 className="text-xl font-bold text-white"> {isGlobal? "Global Players":"Community Players"}</h2>
               <button
                 onClick={onClose}
                 className="text-gray-400 hover:text-gray-300"

@@ -1,15 +1,13 @@
-import React, { useState, useEffect } from 'react';
-import { Target, Zap, Ban, Compass, CheckCircle2, Clock, X, Award, Info, History } from 'lucide-react';
+import { useState } from 'react';
+import { Target, Zap, Ban, Compass, CheckCircle2, X, Award, History } from 'lucide-react';
 import { Card } from '../../ui/card';
 import { Progress } from '../../ui/progress';
 import { challenges } from '../../../data';
-import type { Quest } from '../../../types/dashboard';
 import { QuestLibrary } from './QuestLibrary';
 import { QuestCancelConfirm } from './QuestCancelConfirm';
 import { CompletedQuestsModal } from './CompletedQuestsModal';
 import { useCompletedActivities } from '../../../hooks/useCompletedActivities';
 import { useQuestManager } from '../../../hooks/useQuestManager';
-import { supabase } from '../../../lib/supabase';
 
 interface QuestCardProps {
   userId: string | undefined;
@@ -53,7 +51,7 @@ export function QuestCard({
   }
 
   return (
-    <div className="space-y-4">
+    <div id="quests" className="relative mt-4">
       <div className="flex items-center justify-between gap-4">
         <h2 className="text-xl font-bold text-white">Quests</h2>
         <div className="flex items-center gap-4">
