@@ -16,7 +16,10 @@ interface CommunityLeaderboardProps {
   communityId: string;
   userId?: string;
 }
-
+export interface ModalPosition{
+  top:number;
+  left:number;
+}
 type TimeFrame = 'month' | 'quarter' | 'year';
 
 export function CommunityLeaderboard({ communityId, userId }: CommunityLeaderboardProps) {
@@ -32,6 +35,22 @@ export function CommunityLeaderboard({ communityId, userId }: CommunityLeaderboa
   const [expanded, setExpanded] = useState(false);
   const [showCommunitySelector, setShowCommunitySelector] = useState(false);
   const { handleMakePrimary, updating } = useCommunity(user?.id);
+  const [modalPosition, setModalPosition] = useState<ModalPosition>({
+    top: 0,
+    left: 0,
+  });
+
+  const handlePlayerClick = (
+    entry: LeaderboardEntry,
+    event: React.MouseEvent<HTMLDivElement, MouseEvent>
+  ) => {
+    const buttonRect = event.currentTarget?.getBoundingClientRect();
+    setModalPosition({
+      top: buttonRect.bottom + window.scrollY - 700,
+      left: buttonRect.left + window.scrollX,
+    });
+    setSelectedPlayer(entry);
+  };
 
   const handleCommunityChange = async (communityId: string) => {
     if (updating) return;
@@ -342,7 +361,7 @@ export function CommunityLeaderboard({ communityId, userId }: CommunityLeaderboa
       <div className="space-y-2 mb-4">
         {entries.slice(0, 3).map((entry) => (
           <div
-            onClick={() => setSelectedPlayer(entry)}
+            onClick={(event) => handlePlayerClick(entry,event)}
             key={entry.userId}
             className={`flex items-center justify-between p-2 rounded-lg cursor-pointer ${
               entry.userId === userId ? 'bg-orange-500/10' : entry.rank % 2 === 0 ? 'bg-gray-700/10' : ''
@@ -408,8 +427,8 @@ export function CommunityLeaderboard({ communityId, userId }: CommunityLeaderboa
       {expanded && (
         <div className="space-y-2 mt-4 max-h-96 overflow-y-auto">
           {entries.slice(3).map(entry => (
-            <button
-              onClick={() => setSelectedPlayer(entry)}
+            <div
+              onClick={(event) => handlePlayerClick(entry,event)}
               key={entry.userId}
               className={`w-full flex items-center justify-between p-2 rounded-lg cursor-pointer ${
                 entry.userId === userId ? 'bg-orange-500/10' : entry.rank % 2 === 0 ? 'bg-gray-700/10' : ''
@@ -454,13 +473,15 @@ export function CommunityLeaderboard({ communityId, userId }: CommunityLeaderboa
                   </div>
                 </div>
               </div>
-            </button>
+            </div>
           ))}
         </div>
       )}
       
       {selectedPlayer && (
         <PlayerProfileModal
+         position={modalPosition}
+         applyPosition={true}
           player={selectedPlayer}
           onClose={() => setSelectedPlayer(null)}
         />
