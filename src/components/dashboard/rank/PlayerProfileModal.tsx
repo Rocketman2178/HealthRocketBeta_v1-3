@@ -2,17 +2,20 @@ import { X, Trophy, Heart, Activity, Users, Star } from 'lucide-react';
 import { ModalContainer } from '../../ui/modal-container';
 import { useCommunity } from '../../../hooks/useCommunity';
 import type { LeaderboardEntry } from '../../../types/community';
+import { ModalPosition } from './CommunityLeaderboard';
 
 interface PlayerProfileModalProps {
   player: LeaderboardEntry;
   onClose: () => void;
+  position?:ModalPosition;
+  applyPosition?:boolean;
 }
 
-export function PlayerProfileModal({ player, onClose }: PlayerProfileModalProps) {
+export function PlayerProfileModal({ player, onClose,applyPosition,position }: PlayerProfileModalProps) {
   const { allCommunities } = useCommunity(player.userId);
 
   return (
-    <ModalContainer onClose={onClose}>
+    <ModalContainer onClose={onClose} position={position} applyPosition={applyPosition}>
       <div className="max-w-md w-full p-4 mt-16 sm:mt-0">
         {/* Header */}
         <div className="flex items-center justify-between mb-4">
