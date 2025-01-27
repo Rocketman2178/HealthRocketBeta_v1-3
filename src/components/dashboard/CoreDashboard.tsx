@@ -67,7 +67,7 @@ export function CoreDashboard() {
       const now = new Date();
       const midnight = new Date();
       midnight.setHours(24, 0, 0, 0);
-      const timeUntilMidnight = midnight.getTime() - now.getTime() - 30 * 1000;
+      const timeUntilMidnight = midnight.getTime() - now.getTime() + 60 * 1000;
       const timeoutId = setTimeout(async () => {
         await resetBurnStreak();
         scheduleReset();
@@ -79,7 +79,7 @@ export function CoreDashboard() {
     const timeoutId = scheduleReset();
 
     return () => clearTimeout(timeoutId);
-  }, [user?.id]);
+  }, []);
   // Handle closing the FP congrats modal
   const handleCloseModal = () => {
     setFpEarned(null);
