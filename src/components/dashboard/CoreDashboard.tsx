@@ -80,7 +80,6 @@ export function CoreDashboard() {
     const timeoutId = scheduleReset();
     return () => clearTimeout(timeoutId);
   }, [user?.id]); 
-
   // Handle closing the FP congrats modal
   const handleCloseModal = () => {
     setFpEarned(null);
