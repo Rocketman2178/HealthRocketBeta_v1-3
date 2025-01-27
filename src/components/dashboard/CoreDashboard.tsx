@@ -12,7 +12,7 @@ import { usePlayerStats } from "../../hooks/usePlayerStats";
 import { FPCongrats } from "../ui/fp-congrats";
 import { useBoostState } from "../../hooks/useBoostState";
 import { supabase } from "../../lib/supabase";
-
+import { formatInTimeZone } from 'date-fns-tz';
 
 export function CoreDashboard() {
   const [fpEarned, setFpEarned] = useState<number | null>(null);
@@ -56,30 +56,30 @@ export function CoreDashboard() {
     return () => window.removeEventListener("dashboardUpdate", handleUpdate);
   }, [refreshData, refreshStats]);
 
+  
   useEffect(() => {
+    const NewYorkTimeZone = 'America/New_York';
     const resetBurnStreak = async () => {
       if (!user?.id) return;
       await supabase.rpc("check_and_reset_burn_streaks");
-     
     };
-
+  
     const scheduleReset = () => {
       const now = new Date();
-      const midnight = new Date();
+      const newYorkTime = formatInTimeZone(now, NewYorkTimeZone, 'yyyy-MM-dd HH:mm:ssXXX');
+      const midnight = new Date(newYorkTime);
       midnight.setHours(24, 0, 0, 0);
-      const timeUntilMidnight = midnight.getTime() - now.getTime() + 60 * 1000;
+      const timeUntilMidnight = midnight.getTime() - now.getTime() + 60 * 1000; 
       const timeoutId = setTimeout(async () => {
         await resetBurnStreak();
-        scheduleReset();
+        scheduleReset(); 
       }, timeUntilMidnight);
-
+  
       return timeoutId;
     };
-
     const timeoutId = scheduleReset();
-
     return () => clearTimeout(timeoutId);
-  }, []);
+  }, [user?.id]); 
   // Handle closing the FP congrats modal
   const handleCloseModal = () => {
     setFpEarned(null);
