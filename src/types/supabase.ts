@@ -28,7 +28,8 @@ export interface Database {
           healthspan_years: number
           lifespan: number
           healthspan: number
-          onboarding_completed: boolean
+          onboarding_completed: boolean,
+          onboarding_step:string,
         }
         Insert: {
           id: string
@@ -48,7 +49,8 @@ export interface Database {
           healthspan_years?: number
           lifespan?: number
           healthspan?: number
-          onboarding_completed?: boolean
+          onboarding_completed?: boolean,
+          onboarding_step:string,
         }
         Update: {
           id?: string
@@ -68,7 +70,8 @@ export interface Database {
           healthspan_years?: number
           lifespan?: number
           healthspan?: number
-          onboarding_completed?: boolean
+          onboarding_completed?: boolean,
+          onboarding_step:string,
         }
       }
       category_scores: {
