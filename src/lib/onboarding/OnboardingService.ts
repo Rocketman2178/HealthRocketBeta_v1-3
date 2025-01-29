@@ -11,7 +11,7 @@ export class OnboardingService {
       // Update user's onboarding status
       const { error: updateError } = await supabase
         .from('users')
-        .update({ onboarding_completed: true })
+        .update({ onboarding_completed: true ,onboarding_step:"completed"})
         .eq('id', userId);
 
       if (updateError) throw updateError;
