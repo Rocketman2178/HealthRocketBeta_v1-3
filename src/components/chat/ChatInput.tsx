@@ -1,7 +1,5 @@
-import React, { useState, useRef } from 'react';
-import { Send, Image as ImageIcon, X, Check } from 'lucide-react';
-import type { ChatMessage } from '../../types/chat';
-
+import React, { useState, useRef, KeyboardEvent } from "react";
+import { Send, Image as ImageIcon, X, Check } from "lucide-react";
 interface ChatInputProps {
   onSend: (content: string, mediaFile?: File) => void;
   isVerification?: boolean;
@@ -9,8 +7,13 @@ interface ChatInputProps {
   disabled?: boolean;
 }
 
-export function ChatInput({ onSend, disabled, isVerification, onVerificationChange }: ChatInputProps) {
-  const [message, setMessage] = useState('');
+export function ChatInput({
+  onSend,
+  disabled,
+  isVerification,
+  onVerificationChange,
+}: ChatInputProps) {
+  const [message, setMessage] = useState("");
   const [mediaFile, setMediaFile] = useState<File | null>(null);
   const [mediaPreview, setMediaPreview] = useState<string | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
@@ -18,42 +21,53 @@ export function ChatInput({ onSend, disabled, isVerification, onVerificationChan
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (!message.trim() && !mediaFile) return;
-    
+
     // Pass the current verification state
     onSend(message, mediaFile || undefined);
-    setMessage('');
+    setMessage("");
     setMediaFile(null);
     setMediaPreview(null);
   };
-
+  const handleKeyDown = (e: KeyboardEvent<HTMLTextAreaElement>) => {
+    if (e.key === "Enter" && e.shiftKey) {
+      e.preventDefault();
+      setMessage((prevMessage) => prevMessage + "\n");
+    } else if (e.key === "Enter") {
+      e.preventDefault();
+      handleSubmit(e);
+    }
+  };
   const handleFileSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file) return;
-    
+
     // Check file size (50MB limit)
     if (file.size > 50 * 1024 * 1024) {
-      alert('File size must be less than 50MB');
+      alert("File size must be less than 50MB");
       return;
     }
-    
+
     // Check file type
-    if (!file.type.startsWith('image/') && !file.type.startsWith('video/')) {
-      alert('Only image and video files are supported');
+    if (!file.type.startsWith("image/") && !file.type.startsWith("video/")) {
+      alert("Only image and video files are supported");
       return;
     }
-    
+
     setMediaFile(file);
-    
+
     // Create object URL for preview
     const previewUrl = URL.createObjectURL(file);
     setMediaPreview(previewUrl);
-    
+
     // Clean up object URL when preview changes
     return () => URL.revokeObjectURL(previewUrl);
   };
 
   return (
-    <form onSubmit={handleSubmit} className="border-t border-gray-700 bg-gray-800">
+    <form
+      className="border-t border-gray-700 bg-gray-800"
+      onSubmit={handleSubmit}
+    >
       {/* Verification Checkbox */}
       <div className="px-4 pt-3 flex items-center justify-between">
         <label className="flex items-center gap-2 text-sm text-gray-400">
@@ -76,7 +90,7 @@ export function ChatInput({ onSend, disabled, isVerification, onVerificationChan
       {/* Media Preview */}
       {mediaPreview && (
         <div className="relative w-32 h-32 mx-4 my-2">
-          {mediaFile?.type.startsWith('image/') ? (
+          {mediaFile?.type.startsWith("image/") ? (
             <img
               src={mediaPreview}
               alt="Upload preview"
@@ -114,10 +128,11 @@ export function ChatInput({ onSend, disabled, isVerification, onVerificationChan
           <ImageIcon size={20} />
         </button>
 
-        <input
+        <textarea
           type="text"
           value={message}
           onChange={(e) => setMessage(e.target.value)}
+          onKeyDown={handleKeyDown}
           placeholder="Type your message..."
           className="flex-1 bg-gray-700 text-white rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-orange-500"
           disabled={disabled}
