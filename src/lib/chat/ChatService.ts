@@ -22,6 +22,7 @@ export class ChatService {
         mediaUrl: message.media_url,
         mediaType: message.media_type,
         isVerification: message.is_verification,
+        reply_to_id:message.reply_to_id,
         createdAt: new Date(message.created_at),
         updatedAt: new Date(message.updated_at),
         user_name: message.user_name,
@@ -37,6 +38,7 @@ export class ChatService {
     userId: string,
     content: string,
     chatId: string,
+    reply_to_id:string,
     isVerification: boolean,
     mediaPublicUrl?: string,
     mediaType?: 'image' | 'video'
@@ -51,7 +53,8 @@ export class ChatService {
           content,
           media_url: mediaPublicUrl,
           media_type: mediaType,
-          is_verification: isVerification
+          is_verification: isVerification,
+          reply_to_id:reply_to_id
         })
         .select(`
           id,
@@ -61,6 +64,7 @@ export class ChatService {
           media_url,
           media_type,
           is_verification,
+          reply_to_id,
           created_at,
           updated_at,
           user:users!chat_messages_user_id_fkey (
@@ -81,6 +85,7 @@ export class ChatService {
         mediaUrl: data.media_url,
         mediaType: data.media_type,
         isVerification: Boolean(data.is_verification),
+        reply_to_id:data?.reply_to_id,
         createdAt: new Date(data.created_at),
         updatedAt: new Date(data.updated_at),
         user_name: data.user?.name,
@@ -182,6 +187,7 @@ export class ChatService {
               mediaUrl: payload.new.media_url,
               mediaType: payload.new.media_type,
               isVerification: Boolean(payload.new.is_verification),
+              reply_to_id:payload.new.reply_to_id,
               createdAt: new Date(payload.new.created_at),
               updatedAt: new Date(payload.new.updated_at),
               user_name: userData.user_name,

@@ -1,25 +1,30 @@
-import  { useState, useRef, useEffect } from 'react';
-import { useParams, useNavigate } from 'react-router-dom';
-import { MessageCircle, ArrowLeft, Users } from 'lucide-react';
-import { getChatId } from '../../lib/utils/chat';
-import { ChatMessage } from './ChatMessage';
-import { ChatInput } from './ChatInput';
-import { ChatService } from '../../lib/chat/ChatService';
-import { supabase } from '../../lib/supabase';
-import type { ChatMessage as ChatMessageType } from '../../types/chat';
-import type { LeaderboardEntry } from '../../types/community';
-import { useSupabase } from '../../contexts/SupabaseContext';
-import { ChallengePlayerList } from './ChallengePlayerList';
-import { PlayerProfileModal } from '../dashboard/rank/PlayerProfileModal';
+import { useState, useRef, useEffect } from "react";
+import { useParams, useNavigate } from "react-router-dom";
+import { MessageCircle, ArrowLeft, Users } from "lucide-react";
+import { getChatId } from "../../lib/utils/chat";
+import { ChatMessage } from "./ChatMessage";
+import { ChatInput } from "./ChatInput";
+import { ChatService } from "../../lib/chat/ChatService";
+import { supabase } from "../../lib/supabase";
+import type { ChatMessage as ChatMessageType } from "../../types/chat";
+import type { LeaderboardEntry } from "../../types/community";
+import { useSupabase } from "../../contexts/SupabaseContext";
+import { ChallengePlayerList } from "./ChallengePlayerList";
+import { PlayerProfileModal } from "../dashboard/rank/PlayerProfileModal";
 
 export function ChatPage() {
   const { chatId } = useParams();
   const navigate = useNavigate();
-  const challengeId = chatId?.startsWith('c_') ? chatId.replace('c_', '') : chatId;
+  const challengeId = chatId?.startsWith("c_")
+    ? chatId.replace("c_", "")
+    : chatId;
   const [messages, setMessages] = useState<ChatMessageType[]>([]);
+  const [replyMessage, setReplyMessage] = useState<ChatMessageType>();
   const [playerCount, setPlayerCount] = useState<number>(0);
   const [showPlayerList, setShowPlayerList] = useState(false);
-  const [selectedPlayer, setSelectedPlayer] = useState<LeaderboardEntry | null>(null);
+  const [selectedPlayer, setSelectedPlayer] = useState<LeaderboardEntry | null>(
+    null
+  );
   const [players, setPlayers] = useState<LeaderboardEntry[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<Error | null>(null);
@@ -36,8 +41,8 @@ export function ChatPage() {
   // Redirect if not authenticated or missing challenge ID
   useEffect(() => {
     if (!loading && (!user || !challengeId)) {
-      console.warn('Redirecting to home: missing user or challenge ID');
-      navigate('/');
+      console.warn("Redirecting to home: missing user or challenge ID");
+      navigate("/");
       return;
     }
   }, [user, loading, navigate, challengeId]);
@@ -60,21 +65,21 @@ export function ChatPage() {
   // Get user's join date for this challenge
   useEffect(() => {
     if (!challengeId || !user) return;
-    
+
     const getJoinDate = async () => {
       try {
         const { data } = await supabase
-          .from('challenges')
-          .select('started_at')
-          .eq('challenge_id', challengeId)
-          .eq('user_id', user.id)
+          .from("challenges")
+          .select("started_at")
+          .eq("challenge_id", challengeId)
+          .eq("user_id", user.id)
           .single();
 
         if (data?.started_at) {
           setJoinDate(new Date(data.started_at));
         }
       } catch (err) {
-        console.error('Error getting join date:', err);
+        console.error("Error getting join date:", err);
       }
     };
 
@@ -84,14 +89,14 @@ export function ChatPage() {
   // Fetch initial messages
   const fetchMessages = async (retryCount = 0) => {
     if (!challengeId || !user) return;
-    
+
     try {
       setError(null);
       setLoading(true);
-      
+
       // Get player count
       const { data: count, error: countError } = await supabase.rpc(
-        'get_challenge_players_count',
+        "get_challenge_players_count",
         { p_challenge_id: challengeId }
       );
 
@@ -99,41 +104,48 @@ export function ChatPage() {
       setPlayerCount(count || 0);
 
       // Get messages
-      const { data: messages, error } = await supabase
-        .rpc('get_challenge_messages', {
-          p_chat_id: getChatId(challengeId)
-        });
+      const { data: messages, error } = await supabase.rpc(
+        "get_challenge_messages",
+        {
+          p_chat_id: getChatId(challengeId),
+        }
+      );
 
       if (error) throw error;
-      
+
       // Transform messages to match ChatMessage type
-      const transformedMessages = messages?.map(msg => ({
-        id: msg.id,
-        chatId: msg.chat_id || `c_${chatId}`,
-        userId: msg.user_id || user.id,
-        content: msg.content,
-        mediaUrl: msg.media_url,
-        mediaType: msg.media_type,
-        isVerification: msg.is_verification,
-        createdAt: new Date(msg.created_at),
-        updatedAt: new Date(msg.updated_at),
-        user_name: msg.user_name,
-        user_avatar_url: msg.user_avatar_url
-      }))
-      // Filter messages to only show those within 3 days before join date or after
-      .filter(msg => {
-        if (!joinDate) return true;
-        const messageDate = new Date(msg.createdAt);
-        const cutoffDate = new Date(joinDate);
-        cutoffDate.setDate(cutoffDate.getDate() - 3);
-        return messageDate >= cutoffDate;
-      }) || [];
+      const transformedMessages =
+        messages
+          ?.map((msg) => ({
+            id: msg.id,
+            chatId: msg.chat_id || `c_${chatId}`,
+            userId: msg.user_id || user.id,
+            content: msg.content,
+            mediaUrl: msg.media_url,
+            mediaType: msg.media_type,
+            isVerification: msg.is_verification,
+            reply_to_id: msg.reply_to_id,
+            createdAt: new Date(msg.created_at),
+            updatedAt: new Date(msg.updated_at),
+            user_name: msg.user_name,
+            user_avatar_url: msg.user_avatar_url,
+          }))
+          // Filter messages to only show those within 3 days before join date or after
+          .filter((msg) => {
+            if (!joinDate) return true;
+            const messageDate = new Date(msg.createdAt);
+            const cutoffDate = new Date(joinDate);
+            cutoffDate.setDate(cutoffDate.getDate() - 3);
+            return messageDate >= cutoffDate;
+          }) || [];
 
       setMessages(transformedMessages);
     } catch (err) {
-      console.error('Error fetching messages:', err);
-      setError(err instanceof Error ? err : new Error('Failed to fetch messages'));
-      
+      console.error("Error fetching messages:", err);
+      setError(
+        err instanceof Error ? err : new Error("Failed to fetch messages")
+      );
+
       // Retry logic
       if (retryCount < maxRetries) {
         retryTimeoutRef.current = setTimeout(() => {
@@ -147,7 +159,7 @@ export function ChatPage() {
 
   useEffect(() => {
     fetchMessages();
-    
+
     return () => {
       if (retryTimeoutRef.current) {
         clearTimeout(retryTimeoutRef.current);
@@ -158,15 +170,17 @@ export function ChatPage() {
   // Fetch players when player list is opened
   const fetchPlayers = async () => {
     if (!chatId || !user) return;
-    const challengeId = chatId.replace('c_', '');
+    const challengeId = chatId.replace("c_", "");
     setLoading(true);
 
     try {
       // Use the test_challenge_players function
-      const { data: userData, error } = await supabase
-        .rpc('test_challenge_players', {
-          p_challenge_id: challengeId
-        });
+      const { data: userData, error } = await supabase.rpc(
+        "test_challenge_players",
+        {
+          p_challenge_id: challengeId,
+        }
+      );
 
       if (error) throw error;
 
@@ -182,12 +196,12 @@ export function ChatPage() {
         name: user.name,
         avatarUrl: user.avatar_url,
         level: user.level,
-        plan:user.plan
+        plan: user.plan,
       }));
 
       setPlayers(mappedPlayers);
     } catch (err) {
-      console.error('Error fetching players:', err);
+      console.error("Error fetching players:", err);
     } finally {
       setLoading(false);
     }
@@ -203,9 +217,12 @@ export function ChatPage() {
   // Subscribe to new messages
   useEffect(() => {
     if (!user || !chatId) return;
-    messageSubscriptionRef.current = ChatService.subscribeToMessages(`c_${chatId}`, (message) => {
-      setMessages(prev => [...prev, message]);
-    });
+    messageSubscriptionRef.current = ChatService.subscribeToMessages(
+      `c_${chatId}`,
+      (message) => {
+        setMessages((prev) => [...prev, message]);
+      }
+    );
 
     return () => {
       if (messageSubscriptionRef.current) {
@@ -224,10 +241,10 @@ export function ChatPage() {
 
     // Update on mount and window focus
     updateReadStatus();
-    window.addEventListener('focus', updateReadStatus);
+    window.addEventListener("focus", updateReadStatus);
 
     return () => {
-      window.removeEventListener('focus', updateReadStatus);
+      window.removeEventListener("focus", updateReadStatus);
     };
   }, [chatId, user]);
 
@@ -237,19 +254,19 @@ export function ChatPage() {
       const messageEnd = messagesEndRef.current;
       if (messageEnd) {
         // Use instant scroll for initial load
-        const behavior = loading ? 'auto' : 'smooth';
-        messageEnd.scrollIntoView({ behavior, block: 'end' });
-        
+        const behavior = loading ? "auto" : "smooth";
+        messageEnd.scrollIntoView({ behavior, block: "end" });
+
         // Double-check scroll position after a short delay
         if (scrollTimeoutRef.current) {
           clearTimeout(scrollTimeoutRef.current);
         }
         scrollTimeoutRef.current = setTimeout(() => {
-          messageEnd.scrollIntoView({ behavior: 'auto', block: 'end' });
+          messageEnd.scrollIntoView({ behavior: "auto", block: "end" });
         }, 150);
       }
     };
-    
+
     scrollToBottom();
   }, [messages]);
 
@@ -265,34 +282,36 @@ export function ChatPage() {
         userId: user.id,
         content,
         isVerification,
+        reply_to_id: replyMessage?.id,
         createdAt: now,
         updatedAt: now,
         user_name: user.user_metadata?.name || user.email,
         user_avatar_url: user.user_metadata?.avatar_url,
         mediaUrl: undefined,
-        mediaType: undefined
+        mediaType: undefined,
       };
 
-      // Add optimistic message immediately
-      setMessages(prev => [...prev, optimisticMessage]);
-
+      setMessages((prev) => [...prev, optimisticMessage]);
       let mediaUrl;
       let mediaType;
 
       if (mediaFile) {
         // Upload media file
         const path = `${user.id}/c_${chatId}/${Date.now()}_${mediaFile.name}`;
-        const { data: uploadData, error } = await ChatService.uploadMedia(path, mediaFile);
+        const { data: uploadData, error } = await ChatService.uploadMedia(
+          path,
+          mediaFile
+        );
         if (error) throw error;
         mediaUrl = uploadData.publicUrl;
-        mediaType = mediaFile.type.startsWith('image/') ? 'image' : 'video';
+        mediaType = mediaFile.type.startsWith("image/") ? "image" : "video";
       }
-
       // Send message through ChatService
       await ChatService.sendMessage(
         user.id,
         content,
         getChatId(challengeId),
+        replyMessage?.id,
         isVerification,
         mediaUrl,
         mediaType
@@ -300,18 +319,22 @@ export function ChatPage() {
 
       // Update optimistic message with media info if needed
       if (mediaUrl) {
-        setMessages(prev => prev.map(msg => 
-          msg.id === optimisticMessage.id
-            ? { ...msg, mediaUrl, mediaType }
-            : msg
-        ));
+        setMessages((prev) =>
+          prev.map((msg) =>
+            msg.id === optimisticMessage.id
+              ? { ...msg, mediaUrl, mediaType }
+              : msg
+          )
+        );
       }
 
       setIsVerification(false); // Reset verification flag after sending
+      setReplyMessage(null);
     } catch (err) {
-      console.error('Error sending message:', err);
+      console.error("Error sending message:", err);
       // Remove optimistic message on error
-      setMessages(prev => prev.filter(m => m.id !== optimisticMessage.id));
+      setMessages((prev) => prev.filter((m) => m.id !== optimisticMessage.id));
+      setReplyMessage(null);
     }
   };
 
@@ -319,10 +342,25 @@ export function ChatPage() {
     if (!user) return;
     try {
       await ChatService.deleteMessage(user.id, message.id);
-      setMessages(prev => prev.filter(m => m.id !== message.id));
+      setMessages((prev) => prev.filter((m) => m.id !== message.id));
     } catch (err) {
-      console.error('Error deleting message:', err);
+      console.error("Error deleting message:", err);
     }
+  };
+  const handleReply = (message: ChatMessageType) => {
+    // Create a new reply message object
+    const replyMessage: ChatMessageType = {
+      id: message?.id,
+      content: `Replying to: ${message.content}`,
+      user_name: message?.user_name,
+      createdAt: message?.createdAt,
+      reply_to_id: message?.reply_to_id,
+      isVerification: message?.isVerification,
+      chatId: message?.chatId,
+      userId: message?.userId,
+      updatedAt: message?.updatedAt,
+    };
+    setReplyMessage(replyMessage);
   };
 
   return (
@@ -340,7 +378,9 @@ export function ChatPage() {
               </button>
               <div className="flex items-center gap-2">
                 <MessageCircle className="text-orange-500" size={20} />
-                <h1 className="text-lg font-semibold text-white">Challenge Chat</h1>
+                <h1 className="text-lg font-semibold text-white">
+                  Challenge Chat
+                </h1>
                 <button
                   onClick={() => setShowPlayerList(true)}
                   className="flex items-center gap-2 text-xs text-gray-400 hover:text-white transition-colors"
@@ -379,12 +419,13 @@ export function ChatPage() {
                 <p>No messages yet</p>
               </div>
             ) : (
-              messages.map(message => (
+              messages.map((message) => (
                 <ChatMessage
                   key={message.id}
                   message={message}
                   onDelete={handleDelete}
                   challengeId={challengeId}
+                  onReply={handleReply}
                 />
               ))
             )}
@@ -393,6 +434,8 @@ export function ChatPage() {
 
           {/* Input */}
           <ChatInput
+            replyMessage={replyMessage}
+            setReplyMessage={setReplyMessage}
             onSend={handleSend}
             isVerification={isVerification}
             onVerificationChange={setIsVerification}
@@ -400,7 +443,7 @@ export function ChatPage() {
           />
         </div>
       </div>
-      
+
       {showPlayerList && (
         <ChallengePlayerList
           players={players}

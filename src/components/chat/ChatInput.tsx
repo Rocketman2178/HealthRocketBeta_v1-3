@@ -1,8 +1,17 @@
-import React, { useState, useRef, KeyboardEvent } from "react";
-import { Send, Image as ImageIcon, X, Check } from "lucide-react";
+import React, {
+  useState,
+  useRef,
+  KeyboardEvent,
+  Dispatch,
+  SetStateAction,
+} from "react";
+import { Send, Image as ImageIcon, X, Check, DoorClosed, FolderClosedIcon, PanelTopClose, XIcon } from "lucide-react";
+import { ChatMessage } from "../../types/chat";
 interface ChatInputProps {
   onSend: (content: string, mediaFile?: File) => void;
   isVerification?: boolean;
+  replyMessage: ChatMessage;
+  setReplyMessage: Dispatch<SetStateAction<ChatMessage>>;
   onVerificationChange?: (isVerification: boolean) => void;
   disabled?: boolean;
 }
@@ -11,6 +20,8 @@ export function ChatInput({
   onSend,
   disabled,
   isVerification,
+  replyMessage,
+  setReplyMessage,
   onVerificationChange,
 }: ChatInputProps) {
   const [message, setMessage] = useState("");
@@ -118,41 +129,70 @@ export function ChatInput({
         </div>
       )}
 
-      <div className="flex items-center gap-2 p-4">
-        <button
-          type="button"
-          onClick={() => fileInputRef.current?.click()}
-          className="p-2 text-gray-400 hover:text-white rounded-lg hover:bg-gray-700/50"
-          disabled={disabled}
-        >
-          <ImageIcon size={20} />
-        </button>
+      <div className="flex flex-col">
+        {replyMessage && (
+          <div className="px-3 py-2 rounded-lg break-words relative border border-orange-500/20 bg-gray-800 text-white rounded-tr-none">
+            <div className="flex gap-4 ">
+              <div>
+                <div className="text-xs text-orange-500 font-bold mb-1 cursor-pointer hover:underline">
+                  {replyMessage?.user_name || ""}
+                </div>
+                <div className="text-sm">{replyMessage?.content || ""}</div>
 
-        <textarea
-          type="text"
-          value={message}
-          onChange={(e) => setMessage(e.target.value)}
-          onKeyDown={handleKeyDown}
-          placeholder="Type your message..."
-          className="flex-1 bg-gray-700 text-white rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-orange-500"
-          disabled={disabled}
-        />
+                {/* Timestamp and Actions */}
+                <div className={"flex items-center gap-2 mt-1"}>
+                  <span className="text-[10px] text-gray-400">
+                    {new Date(replyMessage?.createdAt || "").toLocaleString(
+                      [],
+                      {
+                        month: "numeric",
+                        day: "numeric",
+                        hour: "2-digit",
+                        minute: "2-digit",
+                        hour12: true,
+                      }
+                    )}
+                  </span>
+                </div>
+              </div>
+              <XIcon onClick={()=>setReplyMessage(null)} className="cursor-pointer"/>
+            </div>
+          </div>
+        )}
+        <div className="flex items-center gap-2 p-4">
+          <button
+            type="button"
+            onClick={() => fileInputRef.current?.click()}
+            className="p-2 text-gray-400 hover:text-white rounded-lg hover:bg-gray-700/50"
+            disabled={disabled}
+          >
+            <ImageIcon size={20} />
+          </button>
+          <textarea
+            type="text"
+            value={message}
+            onChange={(e) => setMessage(e.target.value)}
+            onKeyDown={handleKeyDown}
+            placeholder="Type your message..."
+            className="flex-1 bg-gray-700 text-white rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-orange-500"
+            disabled={disabled}
+          />
+          <button
+            type="submit"
+            disabled={disabled || (!message.trim() && !mediaFile)}
+            className="p-2 text-orange-500 hover:text-orange-400 rounded-lg hover:bg-gray-700/50 disabled:opacity-50 disabled:cursor-not-allowed"
+          >
+            <Send size={20} />
+          </button>
 
-        <button
-          type="submit"
-          disabled={disabled || (!message.trim() && !mediaFile)}
-          className="p-2 text-orange-500 hover:text-orange-400 rounded-lg hover:bg-gray-700/50 disabled:opacity-50 disabled:cursor-not-allowed"
-        >
-          <Send size={20} />
-        </button>
-
-        <input
-          ref={fileInputRef}
-          type="file"
-          accept="image/*,video/*"
-          className="hidden"
-          onChange={handleFileSelect}
-        />
+          <input
+            ref={fileInputRef}
+            type="file"
+            accept="image/*,video/*"
+            className="hidden"
+            onChange={handleFileSelect}
+          />
+        </div>
       </div>
     </form>
   );

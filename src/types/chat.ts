@@ -6,6 +6,7 @@ export interface ChatMessage {
   mediaUrl?: string;
   mediaType?: 'image' | 'video';
   isVerification: boolean;
+  reply_to_id?:string;
   createdAt: Date;
   updatedAt: Date;
   user_name?: string;
