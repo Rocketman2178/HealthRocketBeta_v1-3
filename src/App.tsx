@@ -12,7 +12,7 @@ function AppContent() {
 
   return (
     <AuthGuard>
-      <SpaceBackground className="min-h-screen">
+      <SpaceBackground>
         <AppRoutes />
         {!isChatPage && (
           <PlayerGuide />
