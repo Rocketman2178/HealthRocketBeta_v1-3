@@ -168,7 +168,6 @@ export function ChatInput({
           >
             <ImageIcon size={20} />
           </button>
-
           <textarea
             type="text"
             value={message}
@@ -178,7 +177,6 @@ export function ChatInput({
             className="flex-1 bg-gray-700 text-white rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-orange-500"
             disabled={disabled}
           />
-
           <button
             type="submit"
             disabled={disabled || (!message.trim() && !mediaFile)}
