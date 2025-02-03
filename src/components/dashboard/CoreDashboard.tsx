@@ -111,7 +111,7 @@ export function CoreDashboard() {
         level={stats.level}
         nextLevelPoints={stats.nextLevelPoints}
       />
-      <main className="max-w-6xl mx-auto px-4 py-6 flex flex-col h-screen gap-4">
+      <main className="max-w-6xl mx-auto px-4 py-6 flex flex-col gap-4">
         <MyRocket
           level={stats.level}
           fuelPoints={stats.fuelPoints}

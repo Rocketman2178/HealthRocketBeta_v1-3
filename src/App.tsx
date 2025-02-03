@@ -1,27 +1,6 @@
 import { BrowserRouter } from 'react-router-dom';
-import { useLocation } from 'react-router-dom';
 import { SupabaseProvider } from './contexts/SupabaseContext'; 
-import { AuthGuard } from './components/auth/AuthGuard';
-import { PlayerGuide } from './components/guide/PlayerGuide';
-import { AppRoutes } from './routes';
-import { SpaceBackground } from './components/ui/space-background'; 
-
-function AppContent() {
-  const location = useLocation();
-  const isChatPage = location.pathname.startsWith('/chat/');
-
-  return (
-    <AuthGuard>
-      <SpaceBackground>
-        <AppRoutes />
-        {!isChatPage && (
-          <PlayerGuide />
-        )}
-      </SpaceBackground>
-    </AuthGuard>
-  );
-}
-
+import AppContent from './components/common/AppContent';
 function App() {
   return (
     <BrowserRouter>
