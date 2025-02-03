@@ -314,9 +314,10 @@ export function PlayerGuide() {
   };
 
   return (
-    <div className="fixed bottom-4 z-50 flex items-center gap-2">
+    <div className="sticky bottom-0 z-50 flex items-center gap-2">
       {/* Navigation Icons - Left Side */}
-      <div className="fixed bottom-4 left-4 flex items-center gap-2">
+      <div className='flex justify-between w-full'>
+      <div className="flex items-center gap-2">
         {/* Navigation Icons */}
         <button
           onClick={() => scrollToSection('leaderboard')}
@@ -349,7 +350,7 @@ export function PlayerGuide() {
       </div>
 
       {/* Ask MC Button - Right Side */}
-      <div className="fixed bottom-4 right-4">
+      <div className="">
         <button
           onClick={handleOpen}
           className={cn(
@@ -361,6 +362,8 @@ export function PlayerGuide() {
           <MessageCircle size={20} />
           <span>Ask MC</span>
         </button>
+      </div>
+
       </div>
 
       {/* Chat Window */}
